@@ -1,0 +1,60 @@
+Meeting NIS Char2SymVec
+6th November, 2019
+
+Participants: Fran, Sergey, Greg, Misha, Daria 
+
+Agenda:
+    
+    - Introductions / background / interests (linguistic, programming)
+    - Getting GitLab set up
+    - Discussion of the existing material 
+    - Discussion of potential tasks to apply the embeddings to
+    - Any other business
+    
+
+Tasks:
+    - Find out how much Chukchi text we have (raw text)
+
+Notes:
+
+Input from chuklang.ru:
+    
+Мургинэт      уттыт                    гэԓгийъэтитӄэтԓинэт                                      ӈэргэрык.
+мы-GEN-PL дерево-NOM.PL PF-INTS-облако-VB-сырой-VB-PF.3SG-PL ранняя.осень-LOC
+
+1000 sentences
+~6000 tokens
+
+1) Train a glosser, which would take chukchi sentences, and produce glosses. --- seq2seq(?)
+
+2) Use the glosser to gloss more Chukchi text, potentially 100,000 tokens ?
+
+$ antiword ~/source/chkchn/corpora/periodicals/Мургин\ нутэнут\ ынкъам\ Ыяакэн\ Эйгыскын.doc  | wc -lw 
+   5751   27383
+$ antiword ~/source/chkchn/corpora/folklore/*.doc | grep -v '(' | wc -wl 
+  12207   51478
+$ antiword ~/source/chkchn/corpora/fiction/* | wc -lw
+   2102    7538
+
+3) segmentation, get a segmenter for Chukchi that goes from surface forms -> segmented surface forms
+
+М у р г и н э т      у т т ы т                    г э ԓ г и й ъ э т и т ӄ э т ԓ и н э т                                      ӈ э р г э р ы к .
+мы GEN PL       дерево NOM.PL    PF INTS облако VB сырой VB PF.3SG PL                   ранняя.осень LOC
+
+http://universaldependencies.org/udw17/pdf/UDW18.pdf   (see Figure 1)
+https://github.com/mpsilfve/ud-segmenter
+
+4) segmented text 
+
+М у р г и н э т          у т т ы т                        г э ԓ г и й ъ э т и т ӄ э т ԓ и н э т                                                   ӈ э р г э р ы к .
+М у р г и > н > э т    у т т > ы т                    г э > ԓ г и й > ъ э т и т ӄ э т > ԓ и > н э т                                      ӈ э р г э р > ы к .
+
+(where > is the segmentation boundary)
+
+5) use the segmented text to train a language model (like the TPR language models)
+
+6) use the language model in some task, e.g. predictive text (keyboards) or morphological analysis
+
+Tasks:
+    Read the papers
+    Run the code from https://gitlab.com/itml_lab/itml.gitlab.io/tree/master
