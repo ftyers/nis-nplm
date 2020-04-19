@@ -1,6 +1,7 @@
 import re
 
 
+# convert the segmentation model output to a nices format
 def convert_segmented_corpus(src, dest):
     sents = []
     with open(src) as f:
@@ -43,5 +44,13 @@ def convert_segmented_corpus(src, dest):
         f.writelines(sents)
 
 
+def find_bad_strings(src):
+    with open(src) as f:
+        for l in f.readlines():
+            if re.match('[^а-яёӈӄ ,.!?\-()\'\n]', l.lower()):
+                print(l)
+
+
 if __name__ == "__main__":
-    convert_segmented_corpus("../corpora/coupus.out", "../corpora/corpus_as_standart")
+    find_bad_strings("../corpora/corpus_v1.txt")
+    # convert_segmented_corpus("../corpora/coupus.out", "../corpora/corpus_as_standard")
