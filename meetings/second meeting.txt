@@ -1,0 +1,54 @@
+Meeting NIS Char2SymVec
+11th November, 2019
+
+Participants: Fran, Sergey, Greg, Misha, Daria 
+
+Agenda:
+  
+    - Updates
+        - Chukchi data
+        - Training of iiksiin
+        - Reading papers
+    - Presentation tomorrow 
+    - Questions?
+    
+- Chukchi:
+    - Asked Asya about the data, Asya will ask Oleg Volkov. He answered that there is no (new) data and all the data we already have (the 2018 stuff). They will send it again. Another person [Ivan Stenin] who works with Chukchi, [Oleg isn't working with Chukchi anymore]. 
+    - There is corpus data here: https://github.com/BasilisAndr/chkchn/tree/master/corpora  ... in case we can't find any elsewhere
+    
+- iiksiin:
+    - Misha tried, didn't work
+    - Greg, Sergey, Daria hasn't tried
+    - train.grn.tok is bible.txt
+    
+- Papers:
+    - 
+    
+    
+TPRs
+
+Roles = linear positions in word
+
+
+arabalarda = araba>lar>da
+
+morphemes:
+role =    0 1 2 3 4     0 1 2     0 1 
+filler =  a r a b a     l a r     d a 
+
+                    ||
+                    ||
+                    v
+
+words:
+
+role =   0              1       2 
+        [a r a b a]    [l a r] [d a] 
+
+
+Tasks:
+    - Misha: file a github issue to fix the documentation: https://github.com/neural-polysynthetic-language-modelling/iiksiin/issues  -- or do pull request. Write documentation for training iiksiin.
+    - Greg:  Define what you want your input data to look like. Train a seq2seq model for doing glossing. 
+    - Dasha: Produce input data according to Greg's specification. -- Can liase with Fran about where to get data etc.
+    - Sergei: Create nice corpus, once sentence per line of data from chkchn/corpora. 
+    - Fran: Find more basic documentation about TPRs

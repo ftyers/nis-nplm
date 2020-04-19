@@ -1,0 +1,129 @@
+Meeting NIS Char2SymVec
+22nd December, 2019
+
+Participants: Fran, Misha, Greg, Sergey
+
+        https://github.com/ftyers/nis-nplm
+
+Agenda:
+    
+
+    - Updates
+
+
+Updates:
+     - Greg: Done the evaluation, difficult to interpret results... used BLEU
+
+    - Results of OpenNMT/seq2seq are very bad, unusable.
+
+    - Look at different approaches to the problem. (maybe CRF?) 
+
+     - Sergey: 
+               http://chuklang.ru/converter
+
+        ətrʔes>e - segmented
+
+        ətrʔese - full
+
+
+       ытръэч>э - segmented
+
+       ытръэче - full
+
+      TODO: find out how they transliterate
+
+
+    rooɬqəɬ - TODO: fix manually
+
+    ro   -jo   -ɬqəɬ  -∅
+
+    ~1000 sentences - 962 sentences - OK
+
+
+     - Misha: Has not run the ud-segmenter, in principle we don't need to run it.
+
+    https://github.com/OneAdder/ud-segmenter
+
+     - Dasha: Absent
+  
+Brainstorm:
+
+        - Binary classifier for input character -> should a morpheme boundary go afterwards?  (based on character input context)
+
+    1. http://people.iiis.tsinghua.edu.cn/~weblt/papers/window-lstm-morph-segmentation.pdf
+
+    Code: ? 
+
+    2. https://www.aclweb.org/anthology/N18-1005.pdf
+
+    Code: http://turing.iimas.unam.mx/wix/MexSeg
+
+    3. https://ryancotterell.github.io/papers/kann+al.emnlp16.pdf
+
+    Code: https://github.com/ryancotterell/neural-canonical-segmentation
+
+    4. OpenNMT (again?)
+
+    Code: 
+
+
+How to apply OpenNMT:
+    
+Option 1:
+    
+LANG1 (WORD): чама # рэн # йъа # галгэтаранлен  # рэмкын #
+LANG2: чама # рэн # йъа # га > лгэ > та > ра > н > лен  # рэмкы > н #
+
+Option 2:
+
+LANG1 (CHAR): ч а м а # р э н # й ъ а # г а л г э т а р а н л е н  # р э м к ы н #
+LANG2: ч а м а # р э н # й ъ а # г а > л г э > т а > р а > н > л е н  # р э м к ы > н #
+
+Option 3:
+    
+LANG1 (BPE): ча ма # рэн # й ъа # га лг этар анл ен  # рэм кын #
+LANG2: ч а м а # р э н # й ъ а # г а > л г э > т а > р а > н > л е н  # р э м к ы > н #
+
+Option 4:
+    
+1) Train the system to copy the input of the big Chukchi corpus
+2) Then do the char2char segmentation model with the checkpoint from the copying training (e.g. transfer learning)
+    
+Todo: 
+    
+
+       - Take a system for segmenting Chukchi and evaluate it using 10-fold cross validation.
+
+        - Greg: OpenNMT
+
+    - Misha: Kann et al. 2016
+
+    - Dasha: MexSeg
+
+    - Sergey: Window LSTM
+
+       - If there is no code available for a given paper, then feel free to google for a different system that has code, and use that.
+
+      
+
+       - Make a draft in overleaf or in Google docs and then invite me and I will take a look
+
+
+
+Notes:
+    
+
+    ERROR: люут ∅>ёъо>ръо>гʔ>э <-- there is a ʔ 
+
+    ERROR: лг>энарагче>льат>к'эна>т ны>лги>тэн'ы>чʔ>эт>к'ин рэмкы>н <-- there is a ʔ 
+
+    QUERY: ямганымгынымгыпы ям ян ян ямна гын нымным>гыпы <-- no seg: ямганымгынымгыпы ?
+
+
+    Licence for the code: GPL
+
+    Licence for the data: find out from Chukchi guys, plead with them for CC-BY-SA 
+
+
+
+

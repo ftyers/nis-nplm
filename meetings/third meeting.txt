@@ -1,0 +1,105 @@
+Meeting NIS Char2SymVec
+18th November, 2019
+
+Participants: Fran, Sergey, Greg, Misha, Daria, Lane 
+
+Agenda:
+
+    - Misha: file a github issue to fix the documentation: https://github.com/neural-polysynthetic-language-modelling/iiksiin/issues  -- or do pull request. Write documentation for training iiksiin.https://github.com/neural-polysynthetic-language-modelling/iiksiin/pull/8
+      - Misha's fork is at: https://github.com/OneAdder/iiksiin
+    - Greg:  Define what you want your input data to look like. Train a seq2seq model for doing glossing.  Sequence of words (Sentence) -> Sequence of morphological tags
+      - In progress. 
+    - Dasha: Produce input data according to Greg's specification. -- Can liase with Fran about where to get data etc.
+    - Sergei: Create nice corpus, once sentence per line of data from chkchn/corpora. 
+    - Fran: Find more basic documentation about TPRs
+        -   Lane: Just accepted the pull request
+
+Training data:
+
+$ cat ~/source/UniversalDependencies/UD_Chukchi-Amguema/ckt_amguema-ud-test.conllu | grep -e 'Gloss' -e '^$' | cut -f2,10
+
+e.g. 
+
+Ԓгинымкыӄин        Gloss=INTS-ST-многий-ST.3SG
+оʼравэтԓьан        Gloss=человек-NOM.SG
+гэетԓин        Gloss=PF-приходить-PF.3SG
+
+Ԓгинымкыӄин -> INTS ST многий ST.3SG
+
+-- Use this for training the seq2seq model for glossing. 
+
+Greg's model:
+    
+File 1 (e.g. English):
+    
+Line 1: Ԓгинымкыӄин оʼравэтԓьан гэетԓин
+    
+File 2 (e.g. French):
+    
+Line 1: INTS ST многий ST.3SG человек NOM.SG PF приходить PF.3SG
+
+Potential solutions to vocab size:
+    
+    1) Train on characters instead of words
+    2) Use BPE 
+
+Serezha's corpus problems:
+    https://github.com/BasilisAndr/chkchn/tree/master/corpora
+
+1) pucntuation marks
+2) quotation marks "sentence words.
+
+What percentage of sentences (a) have «=» (incl. no quotation marks) and (b) end in a punctuation symbol ?  80-85%
+And how many sentences/tokens does that represent ? ~400,000 tokens
+
+
+- Lane: No good intro texts for TPRs (yet!) ... Check with Coleman
+
+
+----
+
+4) segmented text 
+
+М у р г и н э т          у т т ы т       г э ԓ г и й ъ э т и т ӄ э т ԓ и н э т                                                   ӈ э р г э р ы к .
+М у р г и > н > э т    у т т > ы т       г э > ԓ г и й > ъ э т и т ӄ э т > ԓ и > н э т                                      ӈ э р г э р > ы к .
+
+(where > is the segmentation boundary)
+
+5) use the segmented text to train a language model (like the TPR language models)
+
+6) use the language model in some task, e.g. predictive text (keyboards) or morphological analysis
+
+----
+
+Lane is planning on working on: 
+    - Updating the code / cleanup
+    - Experiments described in the final presentation, 
+        - Using the iiksiin (or newer version), where the idea is do a seq2seq where input seq is char and output sequence is vectors that represent morphemes and the vectors are autoencoded TPRs 
+        - morpheme segmentation + morpheme identity prediction
+        
+Potential ideas:
+    - Test the framework with other languages: e.g. English, Russian, Arabic 
+
+----
+
+Tasks:
+    
+     - Misha: If you want, if you have time, you could try and get this code working:  https://github.com/mpsilfve/ud-segmenter
+     - Dasha: Make corpus for Greg
+     - Greg: Make seq2seq model
+     - Serezha: Upload Chukchi corpus somewhere
+
+Questions:
+    
+    Write a data policy for your НИС. (You can submit one per НИС, if you work on it together.) This should include:
+a description of what data you will use
+Chukchi data from Amguema... ask Chukchi guys :D 
+About the chkchn/corpora ... ask Vasya where she got the stuff from 
+where that data comes from, and what license it is under
+As above
+(roughly) what you will do with the data
+
+whether you can/will release the data, and under what license
+
+how another research group will be able to reproduce your project
+

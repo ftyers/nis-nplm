@@ -1,0 +1,55 @@
+Meeting NIS Char2SymVec
+2nd December, 2019
+
+Participants: Fran, Misha, Sergey, Greg, Dasha
+
+        https://github.com/ftyers/nis-nplm
+
+Agenda:
+    
+     - Corpus of glosses
+     - seq2seq with BPE
+     - Evaluate UD-segmenter on Chukchi
+     - Conversion script for glosses -> seq2seq
+
+Updates:
+                - Greg:
+                    - seq2seq with sentence piece working
+                    - output medium good
+                    - give the preprocessed input in addition to the input sentence
+                    - needs to be evaluated... do cross validation
+                - Dasha: 
+                    - Where is the training data for the Gloss model ? 
+                    - Training data for the UD segmenter needs Feature=Value pairs
+                    - Will make hack and if has time will work on a good converter 
+                        - http://chuklang.ru/static/chukchi_glosses_20171020.pdf
+                - Misha:
+                    - Working with Dasha
+                - Seryozha: 
+                    - Did the 100 manually, transliteration with code on the webpage http://chuklang.ru/converter
+                       - will do the rest
+                      - will include zeros as >∅
+
+Todo: 
+        - Dasha:  Write conversion script for gloss output of seq2seq to input for ud-segmenter
+        - Sergey: Finish converting the segmented corpus
+        - Greg:   Do the evaluation, with 10-fold cross validation, and add the word boundries
+        - Misha:  Run ud-segmenter on 150k corpus converted, but you need the training data from Dasha first
+
+Long-term TODO: 
+      - Conversion package for Leipzig style glosses to UD style here is some example code: 
+        - https://github.com/ftyers/ud-scripts/blob/master/conllu-feats.py
+        - https://github.com/apertium/apertium-kaz/blob/master/apertium-kaz.kaz.udx
+        - http://chuklang.ru/static/chukchi_glosses_20171020.pdf
+
+Notes:
+
+> Ынкатагнэпы гатанпаайгым ынӄо рычвок  
+= тот OBL FRONT ABL PF GOOD переставать NP 1SG потом личинка EAT INF
+< тот OBL FRONT ABL PF GOOD переставать NP 1SG потом личинка EAT INF <EOS>
+
+How to turn Leipzig style Glosses into UD style glosses in terms of _format_ ... e.g. if the semantics doesn't matter. 
+
+тот=True OBL=True FRONT=True ABL=True PF=True GOOD=True переставать=True NP=True 1SG=True потом=True личинка=True EAT=True INF=True
+
+

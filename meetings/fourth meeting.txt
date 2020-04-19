@@ -1,0 +1,57 @@
+Meeting NIS Char2SymVec
+27th November, 2019
+
+Participants: Fran, Sergey, Dasha, Misha, Grisha
+
+
+        https://github.com/ftyers/nis-nplm
+
+Agenda:
+    
+     - Corpus of glosses
+     - seq2seq model
+     - Chukchi corpus
+     - https://github.com/mpsilfve/ud-segmenter
+
+Updates:
+    
+    - Corpus of glosses created!
+       - Needs to go somwhere ->https://github.com/ftyers/nis-nplm/corpora
+       - 1006 sentences / ~5k tokens
+    - Corpus of Chukchi created!
+       - Needs to go somwhere ->https://github.com/ftyers/nis-nplm/corpora
+       - This is the first version, there are some sentences that could need to be split.
+       - How many sentences / How many tokens ? 
+       - Sentences: 33,331  Words: 150,180
+    - Found a seq2seq model, trained it to train from Chukchi to glosses. 
+       - Not using BPE.
+       - It's not great, there is something wrong. If there is an unknown word, it will raise an error.
+       - Tried to use BPE, used sentencepiece from Google on the extended corpus (from Sergey)
+       - Need to adapt the model to use BPE.
+       - BPE will be applied only on the source side (Chukchi words)
+       - Can we get 3-5 sentences of output from the model ? 
+    - UD segmenter works
+       - https://github.com/OneAdder/ud-segmenter
+
+      repr(morpheme) = s₁⊗ r₁ + ... + sₙ ⊗ rₙ
+
+      m1 = [1, 0, 0, 0, 0, 0]
+
+      m2 = [0, 1, 0 ,0 ,0 ,0]
+
+         morpheme1 = (s₁⊗ r₁ + ... + sₙ ⊗ rₙ)   ⊗ m1  
+         morpheme2 = (s₁⊗ r₁ + ... + sₙ ⊗ rₙ)   ⊗ m2      
+         word = repr(morpheme1) + repr(morpheme2)
+         corpus2tensors.py = take a corpus and produce a lookup dictionary of morpheme -> tensor ?
+
+         - Question:  "word = repr(morpheme1) + repr(morpheme2)" do we use the vectorised representation or the tensor representation ? 
+              
+Todo: 
+        - Dasha: Write conversion script for gloss output of seq2seq to input for ud-segmenter
+        - Greg: Get BPE model working and test on corpus, also we need word barriers! 
+        - Sergey: Get some sentences with gold standard segmentation 25-100 sentences from the glossed corpus. Greg should not use those 100 sentences in training.
+        - Misha: Run ud-segmenter on 150k corpus converted 
+        - Fran: Ask Christo where the code is for the prediction. 
+
+Notes:
+    
