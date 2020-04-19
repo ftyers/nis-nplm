@@ -7,7 +7,7 @@ Data with some of the apostrophes fixed (after "н" and "к")
 ### v3
 Data without some of the unnecessary characters and with character fixes (meaning turning "C" (ord == 67, English) into "С" (ord == 1057, Russian))
 ### v4
-Data with all the apostrophes fixed - if there is one after the first vowel, turn it into "ʔ"; other case - remove it
+Data with all the apostrophes fixed - if there is one after the vowel, turn it into "ʔ" and put it before the vowel; other case - remove it
 
 ## Corpus
 ### corpus_v1.txt

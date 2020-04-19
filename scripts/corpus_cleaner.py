@@ -356,12 +356,10 @@ def fix_apostrophes(src, dest):
         for l in f.readlines():
             new_line = ""
             delete_apost = False
-            found_vowel_index = -1
             for i in range(len(l)):
                 char = l[i]
                 if char == " ":
                     delete_apost = False
-                    found_vowel_index = -1
                     new_line += char
                     continue
                 if char == "\n":
@@ -370,11 +368,11 @@ def fix_apostrophes(src, dest):
                 prev_char = ''
                 if i > 0:
                     prev_char = l[i - 1]
-                if found_vowel_index == -1 and char.lower() in "аоуыиэ":
-                    found_vowel_index = i
                 if char == "'":
-                    if not delete_apost and prev_char.lower() in "аоуыиэ" and found_vowel_index == i - 1:
-                        new_line += "ʔ"
+                    if not delete_apost and prev_char != "" and prev_char.lower() in "аоуыиэ":
+                        the_vowel = new_line[len(new_line) - 1]
+                        new_line = new_line[:len(new_line) - 1]
+                        new_line += "ʔ" + the_vowel
                         delete_apost = True
                         continue
                     continue
