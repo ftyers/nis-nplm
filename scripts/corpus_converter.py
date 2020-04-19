@@ -1,7 +1,7 @@
 import re
 
 
-def convert_segmented(src, dest):
+def convert_segmented_corpus(src, dest):
     sents = []
     with open(src) as f:
         curr_line = ""
@@ -44,4 +44,4 @@ def convert_segmented(src, dest):
 
 
 if __name__ == "__main__":
-    convert_segmented("../corpora/coupus.out", "../corpora/corpus_as_standart")
+    convert_segmented_corpus("../corpora/coupus.out", "../corpora/corpus_as_standart")
