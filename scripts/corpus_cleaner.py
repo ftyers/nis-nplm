@@ -214,6 +214,7 @@ class MaterialyCleaner(FictionCleaner):
                 new_lines.append(l)
         self.lines = new_lines
 
+
 def kym_sver():
     bc = BasicCleaner("texts/kym-sver.txt")
     bc.read()
@@ -223,6 +224,7 @@ def kym_sver():
     bc.convert_quotes()
     bc.into_sentences()
     bc.write("kym-sver.txt")
+
 
 def fiction1():
     bc = FictionCleaner("texts/corporatxt/fiction1Orawetlan")
@@ -235,6 +237,7 @@ def fiction1():
     bc.into_sentences()
     bc.write("fiction1Orawetlan")
 
+
 def fiction2():
     bc = FictionCleaner("texts/corporatxt/fiction2rethew")
     bc.read()
@@ -245,6 +248,7 @@ def fiction2():
     bc.convert_quotes()
     bc.into_sentences()
     bc.write("fiction2rethew")
+
 
 def folklore1():
     bc = FolkloreCleaner("texts/corporatxt/folklore1olenevodov")
@@ -257,6 +261,7 @@ def folklore1():
     bc.into_sentences()
     bc.write("folklore1olenevodov")
 
+
 def tynenny():
     bc = FolkloreCleaner("texts/fiction/тынэнны.txt")
     bc.read()
@@ -267,6 +272,7 @@ def tynenny():
     bc.convert_quotes()
     bc.into_sentences()
     bc.write("тынэнны.txt")
+
 
 def materialy():
     bc = MaterialyCleaner("texts/folklore/bogoraz materialy i mify/ChukcheeTexts-Bogoras-cyryllic.txt")
@@ -279,6 +285,7 @@ def materialy():
     bc.into_sentences()
     bc.write("ChukcheeTexts-Bogoras-cyryllic.txt")
 
+
 def silniy():
     bc = MaterialyCleaner("texts/folklore/kto samyi silnyi na zemle.txt")
     bc.read()
@@ -289,6 +296,7 @@ def silniy():
     bc.convert_quotes()
     bc.into_sentences()
     bc.write("kto samyi silnyi na zemle.txt")
+
 
 def skazki_olen():
     bc = MaterialyCleaner("texts/folklore/Skazki chukchej-olenevodov.txt")
@@ -301,6 +309,7 @@ def skazki_olen():
     bc.into_sentences()
     bc.write("Skazki chukchej-olenevodov.txt")
 
+
 def skazki_sobr_beli():
     bc = MaterialyCleaner("texts/folklore/skazki sobrannye belikovym.txt")
     bc.read()
@@ -312,7 +321,8 @@ def skazki_sobr_beli():
     bc.into_sentences()
     bc.write("skazki sobrannye belikovym.txt")
 
-if __name__ == "__main__":
+
+def skazki_sobr_yatg():
     bc = MaterialyCleaner("texts/folklore/skazki sobrannye yatgyrgynom.txt")
     bc.read()
     bc.trim_text(5, 1580)
@@ -322,3 +332,58 @@ if __name__ == "__main__":
     bc.convert_quotes()
     bc.into_sentences()
     bc.write("skazki sobrannye yatgyrgynom.txt")
+
+
+def find_bad_strings(src, dest_ok, dest_to_fix):
+    ok = []
+    to_fix = []
+    with open(src) as f:
+        for l in f.readlines():
+            l = re.sub('[–•≪~_»]', '', l)
+            if not re.match('[^а-яА-Я.,!?()\-\n\'ёЁӄӈӃӇԒԓ:∅>ʔ ]', l):
+                ok.append(l)
+            else:
+                to_fix.append(l)
+    with open(dest_ok, 'w') as f:
+        f.writelines(ok)
+    with open(dest_to_fix, 'w') as f:
+        f.writelines(to_fix)
+
+
+def fix_apostrophes(src, dest):
+    strs = []
+    with open(src) as f:
+        for l in f.readlines():
+            new_line = ""
+            delete_apost = False
+            found_vowel_index = -1
+            for i in range(len(l)):
+                char = l[i]
+                if char == " ":
+                    delete_apost = False
+                    found_vowel_index = -1
+                    new_line += char
+                    continue
+                if char == "\n":
+                    new_line += char
+                    continue
+                prev_char = ''
+                if i > 0:
+                    prev_char = l[i - 1]
+                if found_vowel_index == -1 and char.lower() in "аоуыиэ":
+                    found_vowel_index = i
+                if char == "'":
+                    if not delete_apost and prev_char.lower() in "аоуыиэ" and found_vowel_index == i - 1:
+                        new_line += "ʔ"
+                        delete_apost = True
+                        continue
+                    continue
+                new_line += char
+            strs.append(new_line)
+    with open(dest, 'w') as f:
+        f.writelines(strs)
+
+
+if __name__ == "__main__":
+    # find_bad_strings("../corpora/ru_standard_v2", "../corpora/ru_standard_v3", "../corpora/ru_standard_v3_to_fix")
+    fix_apostrophes("../corpora/ru_standard_v3", "../corpora/ru_standard_v4")
