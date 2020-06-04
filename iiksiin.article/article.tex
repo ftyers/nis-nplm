@@ -41,13 +41,16 @@ Polysynthetic low-resource languages are poorly treated with standard language m
 
 Most traditional NLP frameworks target languages that do not have
 much inflection (e.g. \parencite{word2vec}).
-Such frameworks treat \textit{pug} and \textit{pugs} as separate words. It works reasonably well for such analytical languages as Chinese or English. However, there are polysynthetic languages that feature extensive
+Such frameworks treat \textit{cat} and \textit{cats} as separate words. It works reasonably well for analytic languages such as Chinese or English. However, there are polysynthetic languages that feature extensive
 morphology and cannot be efficiently processed this way.
 
-In this work we will model the Chukchi language. Let us consider the following two examples
-(examples (\ref{ex1}) and (\ref{ex2})). They clearly demonstrate the fact
-that it is inefficient to process such languages with traditional frameworks
-such as Word2Vec.
+In this work we will model the Chukchi language. Let us consider the
+following two examples
+(examples (\ref{ex1}) and (\ref{ex2})). As you could see, the words
+have the same root but different inflectional affixes.
+If we model the Chukchi language with one of the traditional
+frameworks, the tokens will be treated as different words and it
+clearly is inefficient.
 
 \begin{exe}
     \ex \label{ex1}
@@ -61,9 +64,10 @@ such as Word2Vec.
 \end{exe}
 
 Moreover, many polysynthetic languages are minority languages.
-It is spoken in north-east Russia by approximately 5100 people
-and is marked as "threatened" \parencite{ethn}. Therefore, there is very little
-language data available for Chukchi.
+For example, Chukchi is spoken in by approximately 5100 people
+and is marked as "threatened" in the \textit{Ethnologue}
+database\parencite{ethn}.
+Therefore, there is very little language data available for Chukchi.
 
 So, our goal is to develop a pipeline that can process
 low-resource languages with extensive inflectional morphology.
@@ -77,7 +81,7 @@ product of a feature of a variable and a feature of its value" \parencite[p. 159
 He suggests using tensor product to accumulate representations of smaller structures into
 bigger ones.
 
-This way, a word \textit{pugs} will be treated not only as a whole but also as a combination
+This way, a word \textit{cats} will be treated not only as a whole but also as a combination
 of two morphemes.
 
 Before we may continue, we should provide the definition of a tensor product.
@@ -86,13 +90,17 @@ Before we may continue, we should provide the definition of a tensor product.
 Let $V_1$ and $V_2$ be two vector spaces.
 A space $W$ furnished with a map $(x_1, x_2) \mapsto x_1 \cdot x_2$
 of $V_1 \times V_2$ into $W$,
-is called the tensor product of $V_1$ and $V_2$ if the two following conditions are satisfied:
+is called the \textbf{tensor product} of $V_1$ and $V_2$ if the two following conditions are satisfied:
 \begin{enumerate}[i.]
     \item $x_1 \cdot x_2$ is linear in each of the variables $x_1$ and $x_2$.
     \item If $(e_i1)$ is a basis of $V_1$ and $(e_i2)$ is a basis of $V_2$, the family of products $e_i1 \cdot e_i2$ is a basis of $W$.
 \end{enumerate}
 \end{theorem} \parencite[p. 8]{tensorProduct}
 
+\begin{theorem}
+\textbf{Representation} is a piece of text data mapped to
+a tensor of real numbers.
+\end{theorem}
 
 The idea to use tensor product of representations to process a natural language, was implemented in 2019 in a tool called \textit{iiksiin} \parencite{schwartz2020neural, iiksiin}.
 It "constructs a sequence of morpheme tensors from a word using Tensor Product Representation"
@@ -101,8 +109,16 @@ It "constructs a sequence of morpheme tensors from a word using Tensor Product R
 
 \section{Data}
 
-For our language model experiments we decided to use Chukchi language \parencite{chukchicorpus}.
-We chose it because it is low-resource and hence, may prove the concept with the least amount of available data. Our corpus consisted in fiction and folklore texts in Cyrillic transliteration. We also had some data serving as a gold standard for segmentation, though it was written in Latin alphabet. Table \ref{tab:preproc} shows some statistics for the data.
+For our language model experiments we use Chukchi corpus
+\parencite{chukchicorpus}. The corpus consists of fiction and folklore
+texts in Cyrillic.
+
+The corpus of Chukchi texts is very small (approximately 30 000 sentences)
+and hence if we manage to model Chukchi using this corpus
+we will prove that our pipeline is efficient for low-resource
+languages.
+
+We also had some data serving as a gold standard for segmentation, though it was written in Latin alphabet. Table \ref{tab:preproc} shows some statistics for the data.
 
 \begin{table}[h]
 \centering
@@ -116,10 +132,21 @@ We chose it because it is low-resource and hence, may prove the concept with the
 \label{tab:preproc}
 \end{table}
 
-To use the corpus, we had to do several things: At first, we fixed the apostrophes after
-\textit{н} and \textit{к} to have \textit{ӈ} and \textit{ӄ}. We then removed invalid characters and fixed the ones in wrong language, meaning \textit{C} (U+0043) and
-\textit{С} (U+0421). Finally, we fixed the apostrophes after the vowels putting \textit{ʔ}
-before the vowel, so that \textit{а’} would be \textit{ʔа}. Fixing the segmentation standard also involved these steps, though at the beginning we had to transliterate it to Cyrillic alphabet. Unfortunately, we had to review some of the sentences manually to make sure the segmentation worked correctly. Table \ref{tab:postproc} shows the statistics for the post-processed corpus.
+To use the corpus, we had to deal with several issues: 
+\begin{itemize}
+    \item The Chukchi writing system allows for variation in the appearance
+    of the following two letters:
+    \textit{н'} = \textit{ӈ} and \textit{к'} = \textit{ӄ}. The latter two symbols
+    were introduced in 1980s \parencite{chukchiLetters}.
+    We needed to unify these options, so we replaced \textit{н'} and
+    \textit{к'} with \textit{ӈ} and \textit{ӄ} respectively.
+    \item We then removed invalid characters and fixed the ones in wrong
+    typeset such as \textit{C} (U+0043) and \textit{С} (U+0421).
+    \item Finally, we fixed the apostrophes after the vowels putting
+    \textit{ʔ} before the vowel, so that \textit{а’} should be \textit{ʔа}
+\end{itemize}
+
+Fixing the segmentation standard also involved these steps, though at the beginning we had to transliterate it to Cyrillic alphabet. Unfortunately, we had to review some of the sentences manually to make sure the segmentation worked correctly. Table \ref{tab:postproc} shows the statistics for the post-processed corpus.
 \begin{table}[h]
 \centering
 \begin{tabular}{|l|l|l|l|}
@@ -176,12 +203,22 @@ Accuracy & Precision & Recall & F1-measure \\ \hline
 
 \section{Tensor Product Representation}
 
-Before using \emph{iiksiin} we had to create a readme file, fix a bug in the code and
-rewrite a \textit{Makefile}.
+Before using \emph{iiksiin} we had to create a readme file,
+fix a CUDA-related bug in the code and
+rewrite the \textit{Makefile}.
 
-Now we provide the detailed explanation of how \textit{iiksiin} works. The first step is to generate alphabet $\Sigma$ for the Chukchi corpus $\Sigma^{*}$ and the dictionary of morpheme tensors. These tensors are produced by the following formula:
+Now we provide the detailed explanation of how \textit{iiksiin} works. The first step is to generate alphabet $\Sigma$ for the Chukchi corpus $\Sigma^{*}$ and the dictionary of morpheme tensors.
 
-\begin{equation}
+We generate tensors for each morpheme $m \in \Sigma^*$ in the following way:
+we sum the outer product of two one-hot vectors for each symbol $s_i$
+in a morpheme $m$. The length of first one-hot vector is equal to
+the length of alphabet $\Sigma$. The symbol index in the alphabet stands
+for its position in the vector. The length of the second vector equals
+to the length of the morpheme $m$. The symbol index in the morpheme stands
+for its position in the vector. This is shown in the
+Equation (\ref{eq:1}).
+
+\begin{equation}\label{eq:1}
     repr(m) = \sum_{i=1}^{n}
     \bigg(oneHot(s_i, \Sigma) \otimes oneHot(r_i, m)\bigg)
 \end{equation}
@@ -218,9 +255,13 @@ Here we provide an example:
     \end{aligned}
 \end{equation}
 
-The next step is to generate tensors for each word $w \in m^*$ in the following way: we sum the outer product of two one-hot vectors for each symbol $s_i$ in a word $w$. The length of first one-hot vector is equal to the length of alphabet $\Sigma$. The symbol index in the alphabet stands for its position in the vector. The length of the second vector equals to the length of the morpheme $m$. The symbol index in the morpheme stands for its position in the vector.
+The next step is to generate tensors for each word $w \in m^*$ in the following way: we sum the tensor product of the morpheme representation $repr(m)$
+from the Equation (\ref{eq:1}) and the one-hot encoded position of the morpheme
+in the word. So, a tensor product of a 2D-matrix and a vector gives
+a 3D-matrix. You could see the formula in the Equation (\ref{eq:3}) and
+an example in the Equation (\ref{eq:4}).
 
-\begin{equation}
+\begin{equation}\label{eq:3}
     repr(w) = \sum_{i=1}^{n}
     \bigg(repr(m_i) \otimes oneHot(m_i, w)\bigg)
 \end{equation}
@@ -228,7 +269,7 @@ Where $n$ is a number of morphemes in a word.
 
 Example:
 
-\begin{multline}
+\begin{multline}\label{eq:4}
     repr(\{caab, bd\}) = \\
     =
     \begin{pmatrix}
