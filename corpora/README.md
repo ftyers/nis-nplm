@@ -7,7 +7,7 @@ Data with some of the apostrophes fixed (after "н" and "к")
 ### v3
 Data without some of the unnecessary characters and with character fixes (meaning turning "C" (ord == 67, English) into "С" (ord == 1057, Russian))
 ### v4
-Data with all the apostrophes fixed - if there is one after the first vowel, turn it into "ʔ"; other case - remove it
+Data with all the apostrophes fixed - removed all 'ʔ' based on Dunn's grammar. 
 
 ## Corpus
 ### corpus_v1.txt
@@ -17,7 +17,7 @@ Is made from "corpus_v1.txt" using the first script from Processing steps
 ### corpus_v3.txt
 Is made from "corpus_v2.txt" using the scripts/corpus_cleaner.py find_bad_strings func and the manual review of bad strings
 ### corpus_v4.txt
-Is made from "corpus_v3.txt" using the scripts/corpus_cleaner.py fix_apostrophes func
+Is the same as corpus_v3.txt due to the fact there are no 'ʔ' there.
 ### corpus_for_segmentation
 Is the input data for the segmentation model (from corpus_v1.txt)
 ### coupus.out
@@ -34,10 +34,10 @@ Is written using Cyrillic transliteration; it was transliterated using http://ch
 then manually reviewed
 ### ru_standard_v2
 Is made from "ru_standard" using the second script from Processing steps
-### ru_standard_v3
+### ru_standard_v3g
 Is made from "ru_standard_v2" using the scripts/corpus_cleaner.py find_bad_strings func
 ### ru_standard_v4
-Is made from "ru_standard_v3" using the scripts/corpus_cleaner.py fix_apostrophes func
+Is made from "ru_standard_v3" being manually fixed.
 ### ru_standard_new_part
 Is the manually checked data from "corpus_as_standard" to be added to the gold standard
 

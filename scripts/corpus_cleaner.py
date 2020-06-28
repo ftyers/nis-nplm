@@ -350,40 +350,5 @@ def find_bad_strings(src, dest_ok, dest_to_fix):
         f.writelines(to_fix)
 
 
-def fix_apostrophes(src, dest):
-    strs = []
-    with open(src) as f:
-        for l in f.readlines():
-            new_line = ""
-            delete_apost = False
-            found_vowel_index = -1
-            for i in range(len(l)):
-                char = l[i]
-                if char == " ":
-                    delete_apost = False
-                    found_vowel_index = -1
-                    new_line += char
-                    continue
-                if char == "\n":
-                    new_line += char
-                    continue
-                prev_char = ''
-                if i > 0:
-                    prev_char = l[i - 1]
-                if found_vowel_index == -1 and char.lower() in "аоуыиэ":
-                    found_vowel_index = i
-                if char == "'":
-                    if not delete_apost and prev_char.lower() in "аоуыиэ" and found_vowel_index == i - 1:
-                        new_line += "ʔ"
-                        delete_apost = True
-                        continue
-                    continue
-                new_line += char
-            strs.append(new_line)
-    with open(dest, 'w') as f:
-        f.writelines(strs)
-
-
 if __name__ == "__main__":
-    # find_bad_strings("../corpora/ru_standard_v2", "../corpora/ru_standard_v3", "../corpora/ru_standard_v3_to_fix")
-    fix_apostrophes("../corpora/ru_standard_v3", "../corpora/ru_standard_v4")
+    find_bad_strings("../corpora/ru_standard_v2", "../corpora/ru_standard_v3", "../corpora/ru_standard_v3_to_fix")
