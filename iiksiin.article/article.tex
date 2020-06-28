@@ -32,25 +32,23 @@
 \maketitle
 
 \begin{abstract}
-Polysynthetic low-resource languages are poorly treated with standard language modeling approaches. In this paper a hypothesis that word-segment embeddings based on tensor product of representations show better performance for low-resource languages compared to conventional word- and char-based models is checked. In order to prove that a pipeline that allows to process low-resource polysynthetic languages was developed. Using Neural Sequence Labeling Toolkit \parencite{yang2018ncrf} to train a segmenter on a Chukchi corpus, a raw Chuckchi corpus was segmented and the \textit{iiksiin} \parencite{iiksiin} model was employed to create the embeddings. After that we tested them on language modelling task and evaluated the results, which showed a notable increase in performance compared to regular approaches.
+Polysynthetic low-resource languages are poorly treated with standard language modeling approaches. In this paper a hypothesis that word-segment embeddings based on tensor product of representations show better performance for low-resource languages compared to conventional word- and char-based models is tested. In order to prove it a pipeline that allows to process low-resource polysynthetic languages was developed. Using Neural Sequence Labeling Toolkit \parencite{yang2018ncrf} to train a segmenter on a Chukchi corpus, a raw Chuckchi corpus was segmented and the \textit{iiksiin} \parencite{iiksiin} model was employed to create the embeddings. After that we tested them on the language modelling task and evaluated the results, which showed a notable increase in performance compared to regular approaches.
 \end{abstract}
 
 \keywords{TPR, Chuckchi, language modeling, polysynthetic, low-resource, NLP} 
 
 \section{Introduction}
 
-Most traditional NLP frameworks target languages that do not have
-much inflection (e.g. \parencite{word2vec}).
-Such frameworks treat \textit{cat} and \textit{cats} as separate words. It works reasonably well for analytic languages such as Chinese or English. However, there are polysynthetic languages that feature extensive
+Most traditional text vectorization approaches target languages that do not have much inflection
+(e.g. \parencite{word2vec, bojanowski2017enriching, pennington2014glove}).
+Such approaches treat \textit{cat} and \textit{cats} as individual words. It works reasonably well for analytic languages such as Chinese or English. However, there are polysynthetic languages that feature extensive
 morphology and cannot be efficiently processed this way.
 
 In this work we will model the Chukchi language. Let us consider the
 following two examples
 (examples (\ref{ex1}) and (\ref{ex2})). As you could see, the words
 have the same root but different inflectional affixes.
-If we model the Chukchi language with one of the traditional
-frameworks, the tokens will be treated as different words and it
-clearly is inefficient.
+Eventually, representing Chukchi tokens using one of the traditional approaches will inevitably fail to encode the complex meaning, that is built up out each and individual morpheme.
 
 \begin{exe}
     \ex \label{ex1}
@@ -69,7 +67,7 @@ and is marked as "threatened" in the \textit{Ethnologue}
 database\parencite{ethn}.
 Therefore, there is very little language data available for Chukchi.
 
-So, our goal is to develop a pipeline that can process
+Due to the two problems mentioned it is impossible to apply traditional approaches, we decided our goal is to develop a pipeline that can process
 low-resource languages with extensive inflectional morphology.
 
 \section{Related work}
@@ -81,26 +79,8 @@ product of a feature of a variable and a feature of its value" \parencite[p. 159
 He suggests using tensor product to accumulate representations of smaller structures into
 bigger ones.
 
-This way, a word \textit{cats} will be treated not only as a whole but also as a combination
+This way, the word \textit{cats} will be treated not only as a whole but also as a combination
 of two morphemes.
-
-Before we may continue, we should provide the definition of a tensor product.
-
-\begin{theorem}
-Let $V_1$ and $V_2$ be two vector spaces.
-A space $W$ furnished with a map $(x_1, x_2) \mapsto x_1 \cdot x_2$
-of $V_1 \times V_2$ into $W$,
-is called the \textbf{tensor product} of $V_1$ and $V_2$ if the two following conditions are satisfied:
-\begin{enumerate}[i.]
-    \item $x_1 \cdot x_2$ is linear in each of the variables $x_1$ and $x_2$.
-    \item If $(e_i1)$ is a basis of $V_1$ and $(e_i2)$ is a basis of $V_2$, the family of products $e_i1 \cdot e_i2$ is a basis of $W$.
-\end{enumerate}
-\end{theorem} \parencite[p. 8]{tensorProduct}
-
-\begin{theorem}
-\textbf{Representation} is a piece of text data mapped to
-a tensor of real numbers.
-\end{theorem}
 
 The idea to use tensor product of representations to process a natural language, was implemented in 2019 in a tool called \textit{iiksiin} \parencite{schwartz2020neural, iiksiin}.
 It "constructs a sequence of morpheme tensors from a word using Tensor Product Representation"
@@ -118,7 +98,7 @@ and hence if we manage to model Chukchi using this corpus
 we will prove that our pipeline is efficient for low-resource
 languages.
 
-We also had some data serving as a gold standard for segmentation, though it was written in Latin alphabet. Table \ref{tab:preproc} shows some statistics for the data.
+We also had some data serving as a segmentation standard, though it was written in Latin alphabet. Table \ref{tab:preproc} shows some statistics for the data.
 
 \begin{table}[h]
 \centering
@@ -142,8 +122,8 @@ To use the corpus, we had to deal with several issues:
     \textit{к'} with \textit{ӈ} and \textit{ӄ} respectively.
     \item We then removed invalid characters and fixed the ones in wrong
     typeset such as \textit{C} (U+0043) and \textit{С} (U+0421).
-    \item Finally, we fixed the apostrophes after the vowels putting
-    \textit{ʔ} before the vowel, so that \textit{а’} should be \textit{ʔа}
+    \item Finally, we fixed the 'ʔ' signs turning them into "'/ь/ъ"
+    in accordance with Chukchi orthography \parencite[58]{dunn1999grammar} so that \textit{ʔА} would be \textit{А'}.
 \end{itemize}
 
 Fixing the segmentation standard also involved these steps, though at the beginning we had to transliterate it to Cyrillic alphabet. Unfortunately, we had to review some of the sentences manually to make sure the segmentation worked correctly. Table \ref{tab:postproc} shows the statistics for the post-processed corpus.
@@ -154,7 +134,7 @@ Fixing the segmentation standard also involved these steps, though at the beginn
 {\color[HTML]{000000} version} & {\color[HTML]{000000} changes}              & {\color[HTML]{000000} sentences} & {\color[HTML]{000000} words}  \\ \hline
 {\color[HTML]{000000} v2}      & {\color[HTML]{000000} \textit{н'} and \textit{к'}}          & {\color[HTML]{000000} 33331}     & {\color[HTML]{000000} 151667} \\ \hline
 {\color[HTML]{000000} v3}      & {\color[HTML]{000000} invalid characters}   & {\color[HTML]{000000} 33323}     & {\color[HTML]{000000} 151585} \\ \hline
-{\color[HTML]{000000} v4}      & {\color[HTML]{000000} \textit{ʔ} before the vowel} & {\color[HTML]{000000} 33323}     & {\color[HTML]{000000} 151585} \\ \hline
+{\color[HTML]{000000} v4}      & {\color[HTML]{000000} fixing \textit{ʔ} sign} & {\color[HTML]{000000} 33323}     & {\color[HTML]{000000} 151585} \\ \hline
 \end{tabular}
 \caption{Post-processed corpus statistics}
 \label{tab:postproc}
@@ -167,10 +147,10 @@ The example of changes in the data can be seen in the Table \ref{tab:datachanges
 \begin{tabular}{|l|l|}
 \hline
 {\color[HTML]{000000} version} & {\color[HTML]{000000} changes}       \\ \hline
-{\color[HTML]{000000} v1}      & {\color[HTML]{000000} а'ачек>∅ эты н>ин>ив>к'ин} \\ \hline
-{\color[HTML]{000000} v2}      & {\color[HTML]{000000} а'ачек>∅ эты н>ин>ив>ӄин} \\ \hline
-{\color[HTML]{000000} v3}      & {\color[HTML]{000000} а'ачек>∅ эты н>ин>ив>ӄин} \\ \hline
-{\color[HTML]{000000} v4}      & {\color[HTML]{000000} ʔаачек>∅ эты н>ин>ив>ӄин} \\ \hline
+{\color[HTML]{000000} v1}      & {\color[HTML]{000000} ʔаачек>∅ эты н>ин>ив>к'ин} \\ \hline
+{\color[HTML]{000000} v2}      & {\color[HTML]{000000} ʔаачек>∅ эты н>ин>ив>ӄин} \\ \hline
+{\color[HTML]{000000} v3}      & {\color[HTML]{000000} ʔаачек>∅ эты н>ин>ив>ӄин} \\ \hline
+{\color[HTML]{000000} v4}      & {\color[HTML]{000000} а'ачек>∅ эты н>ин>ив>ӄин} \\ \hline
 \end{tabular}
 \caption{Changes in data}
 \label{tab:datachanges}
@@ -179,7 +159,7 @@ The example of changes in the data can be seen in the Table \ref{tab:datachanges
 One of the questions we asked ourselves was if our data fixes may be incorrect and would significantly effect the quality of the segmentation model, so we ran it using different versions; the results will be later described.
 
 Evidently, there are not many resources to use both for segmentation training and validation, so we decided to manually validate a piece of the output of the segmentation model in order to have more data to rely on. 
-After the corpus segmentation data had to be put into the tensor-making model; the output of the segmentation model had to be converted from \textsc{bmes} format to the segmented sentences with delimiters.
+Subsequently, the corpus segmentation data had to be put into the tensor-making model; the output of the segmentation model had to be converted from \textsc{bmes} format to the segmented sentences with delimiters.
 
 
 \section{Segmentation}
@@ -187,9 +167,10 @@ The TPR model requires moderately large dataset of texts segmented into morpheme
 
 To achieve any satisfactory segmentation quality, we tested several different approaches varying from rule-based to neural net based solutions. At first, we tried using an LSTM sequence-to-sequence model. We used the OpenNMT library \parencite{klein-etal-2017-opennmt}, that is suitable for solving various sequence-to-sequence tasks, mainly machine translation. We took a word-level tokenized sentence as an input sequence and an arrangement of morphemes and their respective glosses as an output sequence. We used  770 examples for the training and 130 ones for evaluation. The resulting accuracy of 0.33 was, obviously, not enough to rely on this model.
 
-Later, we tried using a rule-based approach. We discovered an in-progress project \parencite{chkchn} that was based on finite state transducing. We tested this tool and got the accuracy of 76.2 \%, that was still not satisfactory. After we decided, that the rule-based approach is not the best possible way to achieve what we pursue, we reformulated the task: the main goal of the segmenter was to show where are the borders between morphemes, not identify them or gloss. Considering this fact, the task was restated as character-level sequence tagging. This allowed us to use the Neural Sequence Labeling toolkit \parencite{yang2018ncrf}, that leveraged convolutional neural network with conditional random field based output layer. To train this model we used 1315 unique words and 146 ones for test. The model was fed words without any context, these words were treated as “sentences”. Each character was assigned one of the four labels: \textsc{b-morph}, \textsc{m-morph}, \textsc{e-morph}, which stand for beginning, middle and end of morpheme. One more label is \textsc{s-morph}, that stands for a single character morpheme. The output of the model is a sequence of the aforementioned tags. We trained during 1000 epochs, the 879th of which gave the most accurate results. This model showed  91\% F-1 rate for morpheme segmentation.
+% ГРИША, ДОБАВЬ СВОЁ
+Later, we tried using a rule-based approach. We discovered an in-progress project \parencite{chkchn} that was based on finite state transducing. We tested this tool and got the accuracy of 76.2 \%, that was still not satisfactory. After that we decided, that the rule-based approach is not the best possible way to achieve what we pursue, we reformulated the task: the main goal of the segmenter was to show where are the borders between morphemes, not identify them or gloss. Considering this fact, the task was restated as character-level sequence tagging. This allowed us to use the Neural Sequence Labeling toolkit \parencite{yang2018ncrf}, that leveraged convolutional neural network with conditional random field based output layer. We trained the model on the train sample of 1315 tokens and tested it on the remaining 146 tokens. The model was fed words without any context, these words were treated as “sentences”. Each character was assigned one of the four labels: \textsc{b-morph}, \textsc{m-morph}, \textsc{e-morph}, which stand for beginning, middle and end of morpheme. One more label is \textsc{s-morph}, that stands for a single character morpheme. The output of the model is a sequence of the aforementioned tags. We trained over 1000 epochs, the 879th of which gave the most accurate results. This model showed  91\% F-1 rate for morpheme segmentation.
 
-The final evaluation metrics are shown the Table \ref{tab:segmmetrics}: 
+The final evaluation metrics are shown in Table \ref{tab:segmmetrics}: 
 \begin{table}[h]
 \centering
 \begin{tabular}{|l|l|l|l|}
@@ -203,16 +184,34 @@ Accuracy & Precision & Recall & F1-measure \\ \hline
 
 \section{Tensor Product Representation}
 
-Before using \emph{iiksiin} we had to create a readme file,
-fix a CUDA-related bug in the code and
-rewrite the \textit{Makefile}.
+% Before using \emph{iiksiin} we had to create a readme file,
+% fix a CUDA-related bug in the code and
+% rewrite the \textit{Makefile}.
+
+Tensor product is defined as follows:
+
+\begin{theorem}
+Let $V_1$ and $V_2$ be two vector spaces.
+A space $W$ furnished with a map $(x_1, x_2) \mapsto x_1 \cdot x_2$
+of $V_1 \times V_2$ into $W$,
+is called the \textbf{tensor product} of $V_1$ and $V_2$ if the two following conditions are satisfied:
+\begin{enumerate}[i.]
+    \item $x_1 \cdot x_2$ is linear in each of the variables $x_1$ and $x_2$.
+    \item If $(e_i1)$ is a basis of $V_1$ and $(e_i2)$ is a basis of $V_2$, the family of products $e_i1 \cdot e_i2$ is a basis of $W$.
+\end{enumerate}
+\end{theorem} \parencite[p. 8]{tensorProduct}
+
+\begin{theorem}
+\textbf{Representation} is a piece of text data mapped to
+a tensor of real numbers.
+\end{theorem}
 
 Now we provide the detailed explanation of how \textit{iiksiin} works. The first step is to generate alphabet $\Sigma$ for the Chukchi corpus $\Sigma^{*}$ and the dictionary of morpheme tensors.
 
 We generate tensors for each morpheme $m \in \Sigma^*$ in the following way:
 we sum the outer product of two one-hot vectors for each symbol $s_i$
-in a morpheme $m$. The length of first one-hot vector is equal to
-the length of alphabet $\Sigma$. The symbol index in the alphabet stands
+in a morpheme $m$. The length of the first one-hot vector is equal to
+the length of the alphabet $\Sigma$. The symbol index in the alphabet stands
 for its position in the vector. The length of the second vector equals
 to the length of the morpheme $m$. The symbol index in the morpheme stands
 for its position in the vector. This is shown in the
@@ -258,7 +257,7 @@ Here we provide an example:
 The next step is to generate tensors for each word $w \in m^*$ in the following way: we sum the tensor product of the morpheme representation $repr(m)$
 from the Equation (\ref{eq:1}) and the one-hot encoded position of the morpheme
 in the word. So, a tensor product of a 2D-matrix and a vector gives
-a 3D-matrix. You could see the formula in the Equation (\ref{eq:3}) and
+a 3D-matrix. You can find the formula in the Equation (\ref{eq:3}) and
 an example in the Equation (\ref{eq:4}).
 
 \begin{equation}\label{eq:3}
@@ -319,16 +318,16 @@ Example:
 \end{multline}
 
 The resulting third-rank tensors are very sparse. So, they
-should be converted into first-rank tensors (vectors) with a neural network algorithm.
-So, the result is a vector space which we call a tensor product of representations.
-    
+should be converted into first-rank tensors (vectors) with a neural network-based autoencoder. For a detailed explanation of it consult \parencite[47-50]{schwartz2020neural}.
+As a result, we obtain a vector space which we call a tensor product of representations.
+
 \section{Evaluation}
 
-To evaluate the quality of the tensor representations of natural language we have decided to train awd-lstm-lm \parencite{awd-lstm} language model.
+To evaluate the quality of the tensor representations of natural language we have decided to train an \textit{awd-lstm-lm} \parencite{awd-lstm} language model.
 
-This language model was chosen due to the fact that it performs the results for polysynthetic languages close to the state-of-the-art and its code is freely distributed and allowed to use.
+This language model was chosen due to the fact that for polysynthetic languages it gives results close to the state-of-the-art and its code is freely distributed and allowed to use.
 
-The LSTM-model was trained on characters, words and segments (with  tensor representation as pre-trained embeddings) and the perplexity of each language model was measured, the results are in the Table \ref{tab:result}. 
+The LSTM-model was trained on characters, words and segments (with  tensor representation as pre-trained embeddings) and the perplexity of each language model was measured, the results are in Table \ref{tab:result}. 
 \begin{table}[h]
 \centering
 \begin{tabular}{|l|l|}
@@ -353,8 +352,8 @@ In this paper we test the hypothesis that word-segment embeddings based on tenso
 of representations show better performance for low-resource languages compared to conventional word- and char-based models. To prove that we developed a pipeline that allows to process low-resource polysynthetic languages. Firstly, we used Neural Sequence Labeling Toolkit \parencite{yang2018ncrf} to train a segmenter on a Chukchi corpus. Later, we segmented a raw Chuckchi corpus using it. Secondly, we used \textit{iiksiin} \parencite{iiksiin} to create the embeddings. After that we tested them in action and evaluated the results, which showed a notable increase in language modeling performance.
 
 \clearpage
-\section*{Thanks}
-We would like to show our appreciation to the HSE expeditions which visited Chukotka and collected the corpus of texts in Chukchi, which gave us an opportunity to test the hypothesis using the corpus they made. We would also like to mention that this research was supported in part through computational resources of HPC facilities at NRU HSE.
+\section*{Acknoledgements}
+We would like to show our appreciation to the HSE expeditions which visited Chukotka and collected the corpus of texts in Chukchi, which gave us an opportunity to test the hypothesis using the corpus they made. We would also like to mention that this research was supported in part through computational resources of HPC facilities at NRU HSE \texttrademark. 
 
 \clearpage
 \appendix
@@ -366,6 +365,8 @@ We would like to show our appreciation to the HSE expeditions which visited Chuk
     \item \textsc{ad} – archaic dative
     \item \textsc{2.s/a.subj-...-irr-2/3sg.s} – nonimperfective subjunctive mood, subject is sigular, in second person
     \item \textsc{emph} – emphatic clitic
+    \item LSTM – long short-term memory network
+    \item TPR – tensor product representation = tensor product of representations
 \end{itemize}
 
 \printbibliography
